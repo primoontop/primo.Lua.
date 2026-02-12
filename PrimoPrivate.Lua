@@ -713,7 +713,6 @@ local player = game.Players.LocalPlayer
         end
     end
 end, "Speed up all tools")
-
 local PetsTab = window:AddTab("PetsTab")
 
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
@@ -872,7 +871,6 @@ PetsTab:AddSwitch("Auto Trade All", function(state)
     autoTradeAll = state
     if state then task.spawn(autoTradeAllLoop) end
 end)
-
 local selectedAura = "Blue Aura"
 local auraDropdown = pets:AddDropdown("Select Aura", function(text)
     selectedAura = text
