@@ -29,7 +29,7 @@ Button.MouseButton1Click:Connect(function()
     if TextBox.Text == KEY then
         Frame:Destroy()
         print("Key correct! Script unlocked.")
-       loadstring(game:HttpGet("https://raw.githubusercontent.com/primoontop/primo.Lua./refs/heads/main/Primo.Lua."))()
+       loadstring(game:HttpGet("https://raw.githubusercontent.com/primoontop/primo.Lua./refs/heads/main/PrimoPrivate.Lua"))()
     
 else
         TextBox.Text = ""
