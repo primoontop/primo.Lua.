@@ -2,7 +2,7 @@ local library = loadstring(game:HttpGet("https://raw.githubusercontent.com/memej
 
 local window = library:AddWindow("Primo Public Script", {
     main_color = Color3.fromRGB(0, 0, 0),
-    min_size = Vector2.new(650, 820),
+    min_size = Vector2.new(620, 820),
 })
 
 local PetsTab = window:AddTab("PetsTab")
