@@ -1,6 +1,6 @@
 --// SIMPLE KEY SYSTEM (SAFE VERSION) \\--
 
-local KEY = "PrimoOnTop"
+local KEY = "PrimoXSlh"
 
 -- Create simple screen UI
 local ScreenGui = Instance.new("ScreenGui", game.Players.LocalPlayer.PlayerGui)
