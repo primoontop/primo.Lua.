@@ -1,38 +1,57 @@
---// SIMPLE KEY SYSTEM (SAFE VERSION) \\--
+--// SIMPLE KEY SYSTEM (IMPROVED VERSION) \\--
 
 local KEY = "PrimoOnTop"
 
--- Create simple screen UI
-local ScreenGui = Instance.new("ScreenGui", game.Players.LocalPlayer.PlayerGui)
-local Frame = Instance.new("Frame", ScreenGui)
+local Players = game:GetService("Players")
+local player = Players.LocalPlayer
+
+-- Create ScreenGui
+local ScreenGui = Instance.new("ScreenGui")
+ScreenGui.Parent = player:WaitForChild("PlayerGui")
+ScreenGui.ResetOnSpawn = false
+
+local Frame = Instance.new("Frame")
+Frame.Parent = ScreenGui
 Frame.Size = UDim2.new(0, 300, 0, 150)
 Frame.Position = UDim2.new(0.5, -150, 0.5, -75)
 Frame.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
 Frame.BorderSizePixel = 0
 Frame.Active = true
+Frame.Draggable = true
 
-local TextBox = Instance.new("TextBox", Frame)
+local TextBox = Instance.new("TextBox")
+TextBox.Parent = Frame
 TextBox.Size = UDim2.new(1, -20, 0, 40)
 TextBox.Position = UDim2.new(0, 10, 0, 20)
 TextBox.PlaceholderText = "Enter Key"
 TextBox.Text = ""
 TextBox.TextScaled = true
 
-local Button = Instance.new("TextButton", Frame)
+local Button = Instance.new("TextButton")
+Button.Parent = Frame
 Button.Size = UDim2.new(1, -20, 0, 40)
 Button.Position = UDim2.new(0, 10, 0, 80)
 Button.Text = "Submit Key"
 Button.BackgroundColor3 = Color3.fromRGB(60, 150, 60)
 Button.TextScaled = true
 
+-- Function to clean text (remove spaces + ignore case)
+local function cleanText(text)
+	text = text:gsub("^%s*(.-)%s*$", "%1") -- remove spaces
+	return string.lower(text)
+end
+
 Button.MouseButton1Click:Connect(function()
-    if TextBox.Text == KEY then
-        Frame:Destroy()
-        print("Key correct! Script unlocked.")
-       loadstring(game:HttpGet("https://raw.githubusercontent.com/primoontop/primo.Lua./refs/heads/main/Primo.Lua. "))()
-    
-else
-        TextBox.Text = ""
-        TextBox.PlaceholderText = "Invalid Key!"
-    end
+	local inputKey = cleanText(TextBox.Text)
+	local correctKey = string.lower(KEY)
+
+	if inputKey == correctKey then
+		Frame:Destroy()
+		print("Key correct! Script unlocked.")
+
+		loadstring(game:HttpGet("https://raw.githubusercontent.com/primoontop/primo.Lua/main/primo.lua"))()
+	else
+		TextBox.Text = ""
+		TextBox.PlaceholderText = "Invalid Key!"
+	end
 end)
