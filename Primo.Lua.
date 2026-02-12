@@ -1920,10 +1920,12 @@ end)
 
 local Credits = window:AddTab("Credits")
 
-Credits:AddLabel("Zyx babaero").TextSize = 20
+Credits:AddLabel("Made by= PRIMO").TextSize = 20
 
-Credits:AddLabel("Made by PRIMO").TextSize = 20
+Credits:AddLabel("Trusted 👇").TextSize = 20
 
 Credits:AddLabel("Kaino").TextSize = 20
 
-Credits:AddLabel("Made for SLH CLAN").TextSize = 20
+Credits:AddLabel("Zyx").TextSize = 20
+
+Credits:AddLabel("UnoXDos").TextSize = 20
