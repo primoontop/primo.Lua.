@@ -41,4 +41,4 @@ Emoji.TextScaled = true
 
 -- Warning: This is just a UI. To remove it, the player needs to reset or leave.
 print("Troll UI Load
-ed!")
+  ed!")
