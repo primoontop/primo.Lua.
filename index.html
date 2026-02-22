@@ -3,36 +3,50 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Primo V2 - 30 Second Challenge</title>
+    <title>Primo V2 - 30s Challenge</title>
     <style>
         body { font-family: 'Courier New', monospace; background: #000; color: #00ff00; text-align: center; padding: 20px; overflow: hidden; margin: 0; }
         #matrix-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; }
         .container { 
             border: 2px solid #00ff00; 
             background: rgba(0, 0, 0, 0.9); 
-            padding: 30px; 
+            padding: 20px; 
             border-radius: 10px; 
-            max-width: 500px; 
-            margin: 50px auto; 
-            box-shadow: 0 0 30px #00ff00;
+            max-width: 420px; 
+            margin: 40px auto; 
+            box-shadow: 0 0 20px #00ff00;
             position: relative;
             z-index: 1;
         }
-        #timer-display { font-size: 28px; color: #ff0000; font-weight: bold; margin-bottom: 10px; text-shadow: 0 0 15px #ff0000; }
+        #timer-display { font-size: 26px; color: #ff0000; font-weight: bold; margin-bottom: 10px; text-shadow: 0 0 10px #ff0000; }
+        h1 { color: #fff; text-shadow: 0 0 10px #00ff00; font-size: 28px; margin: 5px 0; }
+        
+        .puzzle { 
+            font-size: 18px; 
+            font-weight: bold; 
+            letter-spacing: 3px; 
+            margin: 20px 0; 
+            color: #fff; 
+            background: rgba(0, 255, 0, 0.1); 
+            padding: 15px; 
+            border: 1px dashed #00ff00;
+            word-break: break-all;
+            min-height: 30px;
+        }
+
         @keyframes shake {
             0% { transform: translateX(0); }
-            25% { transform: translateX(-10px); }
-            50% { transform: translateX(10px); }
-            75% { transform: translateX(-10px); }
+            25% { transform: translateX(-5px); }
+            50% { transform: translateX(5px); }
             100% { transform: translateX(0); }
         }
-        .shake-now { animation: shake 0.2s ease-in-out; border-color: #ff0000; box-shadow: 0 0 30px #ff0000; }
-        h1 { color: #fff; text-shadow: 0 0 15px #00ff00; font-size: 32px; margin: 0; }
-        .puzzle { font-size: 20px; font-weight: bold; letter-spacing: 4px; margin: 20px 0; color: #fff; background: rgba(0, 255, 0, 0.1); padding: 15px; border: 1px dashed #00ff00; }
-        input { padding: 10px; font-size: 20px; width: 50px; text-align: center; border: 1px solid #00ff00; background: #000; color: #00ff00; outline: none; }
-        button { padding: 10px 20px; font-size: 16px; background: #00ff00; color: #000; border: none; cursor: pointer; font-weight: bold; }
-        #secret-box { display: none; margin-top: 20px; border-top: 2px solid #00ff00; padding-top: 15px; }
-        textarea { width: 100%; height: 70px; background: #000; color: #00ff00; padding: 10px; border: 1px solid #00ff00; font-size: 11px; resize: none; }
+        .shake-now { animation: shake 0.2s ease-in-out; border-color: #ff0000; }
+
+        input { padding: 10px; font-size: 18px; width: 40px; text-align: center; border: 1px solid #00ff00; background: #000; color: #00ff00; outline: none; }
+        button { padding: 10px 15px; font-size: 16px; background: #00ff00; color: #000; border: none; cursor: pointer; font-weight: bold; }
+        
+        #secret-box { display: none; margin-top: 15px; border-top: 2px solid #00ff00; padding-top: 10px; }
+        textarea { width: 100%; height: 65px; background: #000; color: #00ff00; padding: 8px; border: 1px solid #00ff00; font-size: 10px; resize: none; }
     </style>
 </head>
 <body>
@@ -40,21 +54,21 @@
     <canvas id="matrix-canvas"></canvas>
 
     <div class="container" id="main-box">
-        <div id="timer-display">TIME REMAINING: 30s</div>
+        <div id="timer-display">TIME: 30s</div>
         <h1>PRIMO V2</h1>
-        <p style="font-size: 11px; color: #ff0000;">WARNING: 30 SECONDS TO DECRYPT OR TERMINATE</p>
+        <p style="font-size: 10px; color: #ff0000; margin: 0;">TERMINATION IN 30 SECONDS</p>
 
-        <div class="puzzle" id="display">P _ _ M _ L _ _ G _ _ L _ _ K _ _</div>
+        <div class="puzzle" id="display">P _ _ M _ L _ _ G _ _ L _ _ A _</div>
 
         <div id="input-group">
             <input type="text" id="letterIn" maxlength="1" placeholder="?">
             <button onclick="guess()">DECRYPT</button>
         </div>
 
-        <p id="msg" style="font-size: 12px;">SYSTEM READY...</p>
+        <p id="msg" style="font-size: 11px; margin-top: 10px;">SYSTEM ONLINE...</p>
 
         <div id="secret-box">
-            <h3 style="color: #fff;">[ACCESS GRANTED]</h3>
+            <h3 style="color: #fff; font-size: 14px;">[ACCESS GRANTED]</h3>
             <textarea id="scriptArea" readonly>loadstring(game:HttpGet("https://raw.githubusercontent.com/dezqpal/Primo/refs/heads/main/v2paidObf.lua"))()</textarea>
             <br><br>
             <button style="width: 100%; background: #fff;" onclick="copyMe()">COPY SCRIPT</button>
@@ -82,64 +96,61 @@
         }
         setInterval(drawMatrix, 50);
 
-        // TIMER LOGIC (30 SECONDS)
-        let timeInSeconds = 30;
-        let timerFinished = false;
-        const timerElement = document.getElementById('timer-display');
-
+        // Timer Logic
+        let timeLeft = 30;
+        let active = true;
+        const timerEl = document.getElementById('timer-display');
         const countdown = setInterval(() => {
-            if (timerFinished) return;
-            
-            timerElement.innerText = `TIME REMAINING: ${timeInSeconds}s`;
-
-            if (timeInSeconds <= 0) {
+            if (!active) return;
+            timerEl.innerText = `TIME: ${timeLeft}s`;
+            if (timeLeft <= 0) {
                 clearInterval(countdown);
-                alert("ACCESS DENIED. TIME EXPIRED.");
+                alert("TIME EXPIRED.");
                 window.location.href = "https://www.google.com";
             }
-            timeInSeconds--;
+            timeLeft--;
         }, 1000);
 
-        // Game Logic
-        const secretWord = "PRIMOLANGMALAKAS";
-        let currentStatus = ["P", "_", "_", "M", "_", "L", "_", "_", "G", "_", "_", "L", "_", "K", "_", "_"];
+        // Game Logic base sa bagong pattern
+        const secret = "PRIMOLANGMALAKAS";
+        // P _ _ M _ L _ _ G _ _ L _ _ A _ (16-17 chars)
+        let current = ["P", "_", "_", "M", "_", "L", "_", "_", "G", "_", "_", "L", "_", "_", "A", "_"];
 
         function refresh() {
-            document.getElementById('display').innerText = currentStatus.join(" ");
-            if (!currentStatus.includes("_")) {
-                timerFinished = true;
+            document.getElementById('display').innerText = current.join(" ");
+            if (!current.includes("_")) {
+                active = false;
                 document.getElementById('sound-success').play();
                 document.getElementById('secret-box').style.display = "block";
                 document.getElementById('input-group').style.display = "none";
-                document.getElementById('msg').innerText = ">>> DECRYPTION SUCCESSFUL";
+                document.getElementById('msg').innerText = ">>> DECRYPTED";
             }
         }
 
         function guess() {
-            const mainBox = document.getElementById('main-box');
             let box = document.getElementById('letterIn');
-            let letter = box.value.toUpperCase();
+            let val = box.value.toUpperCase();
             box.value = "";
-            if (!letter) return;
+            if (!val) return;
 
-            let found = false;
-            for (let i = 0; i < secretWord.length; i++) {
-                if (secretWord[i] === letter && currentStatus[i] === "_") {
-                    currentStatus[i] = letter;
-                    found = true;
+            let hit = false;
+            for (let i = 0; i < secret.length; i++) {
+                if (secret[i] === val && current[i] === "_") {
+                    current[i] = val;
+                    hit = true;
                 }
             }
 
-            if (found) {
+            if (hit) {
                 document.getElementById('sound-correct').play();
-                document.getElementById('msg').innerText = ">>> MATCH FOUND: " + letter;
+                document.getElementById('msg').innerText = ">>> MATCH: " + val;
                 document.getElementById('msg').style.color = "#00ff00";
             } else {
                 document.getElementById('sound-wrong').play();
-                mainBox.classList.add('shake-now');
-                document.getElementById('msg').innerText = ">>> ERROR: WRONG CHARACTER";
+                document.getElementById('main-box').classList.add('shake-now');
+                document.getElementById('msg').innerText = ">>> ERROR";
                 document.getElementById('msg').style.color = "#ff0000";
-                setTimeout(() => mainBox.classList.remove('shake-now'), 200);
+                setTimeout(() => document.getElementById('main-box').classList.remove('shake-now'), 200);
             }
             refresh();
         }
@@ -147,9 +158,10 @@
         function copyMe() {
             let t = document.getElementById("scriptArea");
             t.select(); document.execCommand("copy");
-            alert("Script Copied!");
+            alert("Copied!");
         }
         refresh();
     </script>
 </body>
 </html>
+
