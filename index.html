@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Primo V2 - 30s Challenge</title>
+    <title>Primo V2 - Double Challenge</title>
     <style>
         body { font-family: 'Courier New', monospace; background: #000; color: #00ff00; text-align: center; padding: 20px; overflow: hidden; margin: 0; }
         #matrix-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; }
@@ -21,32 +21,27 @@
         #timer-display { font-size: 26px; color: #ff0000; font-weight: bold; margin-bottom: 10px; text-shadow: 0 0 10px #ff0000; }
         h1 { color: #fff; text-shadow: 0 0 10px #00ff00; font-size: 28px; margin: 5px 0; }
         
-        .puzzle { 
-            font-size: 18px; 
-            font-weight: bold; 
-            letter-spacing: 3px; 
-            margin: 20px 0; 
-            color: #fff; 
-            background: rgba(0, 255, 0, 0.1); 
-            padding: 15px; 
-            border: 1px dashed #00ff00;
-            word-break: break-all;
-            min-height: 30px;
+        .puzzle, .question-box { 
+            font-size: 18px; font-weight: bold; letter-spacing: 2px; 
+            margin: 20px 0; color: #fff; background: rgba(0, 255, 0, 0.1); 
+            padding: 15px; border: 1px dashed #00ff00;
         }
 
-        @keyframes shake {
-            0% { transform: translateX(0); }
-            25% { transform: translateX(-5px); }
-            50% { transform: translateX(5px); }
-            100% { transform: translateX(0); }
-        }
+        #trivia-section { display: none; animation: fadeIn 0.5s; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        @keyframes shake { 0% { transform: translateX(0); } 25% { transform: translateX(-5px); } 50% { transform: translateX(5px); } 100% { transform: translateX(0); } }
         .shake-now { animation: shake 0.2s ease-in-out; border-color: #ff0000; }
 
-        input { padding: 10px; font-size: 18px; width: 40px; text-align: center; border: 1px solid #00ff00; background: #000; color: #00ff00; outline: none; }
-        button { padding: 10px 15px; font-size: 16px; background: #00ff00; color: #000; border: none; cursor: pointer; font-weight: bold; }
+        input { padding: 10px; font-size: 16px; border: 1px solid #00ff00; background: #000; color: #00ff00; outline: none; margin-bottom: 10px; }
+        .letter-in { width: 40px; text-align: center; font-size: 20px; }
+        .answer-in { width: 80%; }
+        
+        button { padding: 10px 15px; font-size: 14px; background: #00ff00; color: #000; border: none; cursor: pointer; font-weight: bold; }
+        button:hover { background: #fff; }
         
         #secret-box { display: none; margin-top: 15px; border-top: 2px solid #00ff00; padding-top: 10px; }
-        textarea { width: 100%; height: 65px; background: #000; color: #00ff00; padding: 8px; border: 1px solid #00ff00; font-size: 10px; resize: none; }
+        textarea { width: 100%; height: 60px; background: #000; color: #39ff14; padding: 8px; border: 1px solid #00ff00; font-size: 10px; resize: none; }
     </style>
 </head>
 <body>
@@ -56,13 +51,20 @@
     <div class="container" id="main-box">
         <div id="timer-display">TIME: 30s</div>
         <h1>PRIMO V2</h1>
-        <p style="font-size: 10px; color: #ff0000; margin: 0;">TERMINATION IN 30 SECONDS</p>
+        
+        <div id="puzzle-section">
+            <p style="font-size: 10px; color: #00ff00;">STEP 1: DECRYPT THE WORD</p>
+            <div class="puzzle" id="display">P _ _ M _ L _ _ G _ _ L _ _ A _</div>
+            <input type="text" id="letterIn" class="letter-in" maxlength="1" placeholder="?">
+            <button onclick="guess()">SUBMIT</button>
+        </div>
 
-        <div class="puzzle" id="display">P _ _ M _ L _ _ G _ _ L _ _ A _</div>
-
-        <div id="input-group">
-            <input type="text" id="letterIn" maxlength="1" placeholder="?">
-            <button onclick="guess()">DECRYPT</button>
+        <div id="trivia-section">
+            <p style="font-size: 10px; color: #f0883e;">STEP 2: SECURITY QUESTION</p>
+            <div class="question-box">What is Primo's favorite game on Roblox?</div>
+            <input type="text" id="answerIn" class="answer-in" placeholder="TYPE ANSWER HERE...">
+            <br>
+            <button onclick="checkTrivia()">UNLOCK SCRIPT</button>
         </div>
 
         <p id="msg" style="font-size: 11px; margin-top: 10px;">SYSTEM ONLINE...</p>
@@ -96,36 +98,23 @@
         }
         setInterval(drawMatrix, 50);
 
-        // Timer Logic
+        // Timer
         let timeLeft = 30;
         let active = true;
-        const timerEl = document.getElementById('timer-display');
         const countdown = setInterval(() => {
             if (!active) return;
-            timerEl.innerText = `TIME: ${timeLeft}s`;
+            document.getElementById('timer-display').innerText = `TIME: ${timeLeft}s`;
             if (timeLeft <= 0) {
                 clearInterval(countdown);
-                alert("TIME EXPIRED.");
+                alert("ACCESS DENIED: TIME EXPIRED.");
                 window.location.href = "https://www.google.com";
             }
             timeLeft--;
         }, 1000);
 
-        // Game Logic base sa bagong pattern
+        // Puzzle Logic
         const secret = "PRIMOLANGMALAKAS";
-        // P _ _ M _ L _ _ G _ _ L _ _ A _ (16-17 chars)
         let current = ["P", "_", "_", "M", "_", "L", "_", "_", "G", "_", "_", "L", "_", "_", "A", "_"];
-
-        function refresh() {
-            document.getElementById('display').innerText = current.join(" ");
-            if (!current.includes("_")) {
-                active = false;
-                document.getElementById('sound-success').play();
-                document.getElementById('secret-box').style.display = "block";
-                document.getElementById('input-group').style.display = "none";
-                document.getElementById('msg').innerText = ">>> DECRYPTED";
-            }
-        }
 
         function guess() {
             let box = document.getElementById('letterIn');
@@ -143,25 +132,45 @@
 
             if (hit) {
                 document.getElementById('sound-correct').play();
-                document.getElementById('msg').innerText = ">>> MATCH: " + val;
+                document.getElementById('display').innerText = current.join(" ");
+                if (!current.includes("_")) {
+                    document.getElementById('puzzle-section').style.display = "none";
+                    document.getElementById('trivia-section').style.display = "block";
+                    document.getElementById('msg').innerText = "PUZZLE SOLVED. ANSWER SECURITY QUESTION.";
+                }
+            } else {
+                triggerError();
+            }
+        }
+
+        // Trivia Logic
+        function checkTrivia() {
+            const ans = document.getElementById('answerIn').value.toUpperCase().trim();
+            if (ans === "MUSCLE LEGEND" || ans === "MUSCLE LEGENDS") {
+                active = false;
+                document.getElementById('sound-success').play();
+                document.getElementById('trivia-section').style.display = "none";
+                document.getElementById('secret-box').style.display = "block";
+                document.getElementById('msg').innerText = "ACCESS GRANTED.";
                 document.getElementById('msg').style.color = "#00ff00";
             } else {
-                document.getElementById('sound-wrong').play();
-                document.getElementById('main-box').classList.add('shake-now');
-                document.getElementById('msg').innerText = ">>> ERROR";
-                document.getElementById('msg').style.color = "#ff0000";
-                setTimeout(() => document.getElementById('main-box').classList.remove('shake-now'), 200);
+                triggerError();
             }
-            refresh();
+        }
+
+        function triggerError() {
+            document.getElementById('sound-wrong').play();
+            document.getElementById('main-box').classList.add('shake-now');
+            document.getElementById('msg').innerText = ">>> ERROR: WRONG DATA";
+            document.getElementById('msg').style.color = "#ff0000";
+            setTimeout(() => document.getElementById('main-box').classList.remove('shake-now'), 200);
         }
 
         function copyMe() {
             let t = document.getElementById("scriptArea");
             t.select(); document.execCommand("copy");
-            alert("Copied!");
+            alert("Script Copied!");
         }
-        refresh();
     </script>
 </body>
 </html>
-
