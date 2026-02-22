@@ -54,7 +54,7 @@
         
         <div id="puzzle-section">
             <p style="font-size: 10px; color: #00ff00;">STEP 1: DECRYPT THE WORD</p>
-            <div class="puzzle" id="display">P _ _ M _ L _ _ G _ _ L _ _ A _</div>
+            <div class="puzzle" id="display">B_B_ _R_ _K_</div>
             <input type="text" id="letterIn" class="letter-in" maxlength="1" placeholder="?">
             <button onclick="guess()">SUBMIT</button>
         </div>
@@ -113,8 +113,8 @@
         }, 1000);
 
         // Puzzle Logic
-        const secret = "PRIMOLANGMALAKAS";
-        let current = ["P", "_", "_", "M", "_", "L", "_", "_", "G", "_", "_", "L", "_", "_", "A", "_"];
+        const secret = "BABAEROAKO";
+        let current = ["B","_","B","_","_","R","_","_""K","_"];
 
         function guess() {
             let box = document.getElementById('letterIn');
