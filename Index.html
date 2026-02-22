@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="tl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Primo V2 - 30 Min Challenge</title>
+    <style>
+        body { font-family: 'Courier New', monospace; background: #000; color: #00ff00; text-align: center; padding: 20px; overflow: hidden; margin: 0; }
+        
+        #matrix-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; }
+
+        .container { 
+            border: 2px solid #00ff00; 
+            background: rgba(0, 0, 0, 0.9); 
+            padding: 30px; 
+            border-radius: 10px; 
+            max-width: 500px; 
+            margin: 50px auto; 
+            box-shadow: 0 0 30px #00ff00;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Timer Style */
+        #timer-display { font-size: 24px; color: #ff0000; font-weight: bold; margin-bottom: 10px; text-shadow: 0 0 10px #ff0000; }
+
+        @keyframes shake {
+            0% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            50% { transform: translateX(10px); }
+            75% { transform: translateX(-10px); }
+            100% { transform: translateX(0); }
+        }
+
+        .shake-now { animation: shake 0.2s ease-in-out; border-color: #ff0000; box-shadow: 0 0 30px #ff0000; }
+
+        h1 { color: #fff; text-shadow: 0 0 15px #00ff00; font-size: 32px; margin: 0; }
+        .puzzle { font-size: 20px; font-weight: bold; letter-spacing: 4px; margin: 20px 0; color: #fff; background: rgba(0, 255, 0, 0.1); padding: 15px; border: 1px dashed #00ff00; }
+        input { padding: 10px; font-size: 20px; width: 50px; text-align: center; border: 1px solid #00ff00; background: #000; color: #00ff00; outline: none; }
+        button { padding: 10px 20px; font-size: 16px; background: #00ff00; color: #000; border: none; cursor: pointer; font-weight: bold; }
+        
+        #secret-box { display: none; margin-top: 20px; border-top: 2px solid #00ff00; padding-top: 15px; }
+        textarea { width: 100%; height: 70px; background: #000; color: #00ff00; padding: 10px; border: 1px solid #00ff00; font-size: 11px; resize: none; }
+    </style>
+</head>
+<body>
+
+    <canvas id="matrix-canvas"></canvas>
+
+    <div class="container" id="main-box">
+        <div id="timer-display">TIME REMAINING: 30:00</div>
+        <h1>PRIMO V2</h1>
+        <p style="font-size: 12px;">DECRYPT BEFORE TIME RUNS OUT OR BE TERMINATED</p>
+
+        <div class="puzzle" id="display">P _ _ M _ L _ _ G _ _ L _ _ K _ _</div>
+
+        <div id="input-group">
+            <input type="text" id="letterIn" maxlength="1" placeholder="_">
+            <button onclick="guess()">DECRYPT</button>
+        </div>
+
+        <p id="msg" style="font-size: 12px;">SYSTEM ONLINE...</p>
+
+        <div id="secret-box">
+            <h3 style="color: #fff;">[ACCESS GRANTED]</h3>
+            <textarea id="scriptArea" readonly>loadstring(game:HttpGet("https://raw.githubusercontent.com/dezqpal/Primo/refs/heads/main/v2paidObf.lua"))()</textarea>
+            <br><br>
+            <button style="width: 100%; background: #fff;" onclick="copyMe()">COPY SCRIPT</button>
+        </div>
+    </div>
+
+    <audio id="sound-correct" src="https://www.soundjay.com/buttons/button-09.mp3"></audio>
+    <audio id="sound-wrong" src="https://www.soundjay.com/buttons/button-10.mp3"></audio>
+    <audio id="sound-success" src="https://www.soundjay.com/communication/digital-beeping-2.mp3"></audio>
+
+    <script>
+        // --- MATRIX EFFECT ---
+        const canvas = document.getElementById('matrix-canvas');
+        const ctx = canvas.getContext('2d');
+        canvas.width = window.innerWidth; canvas.height = window.innerHeight;
+        const drops = Array(Math.floor(canvas.width / 20)).fill(1);
+        function drawMatrix() {
+            ctx.fillStyle = "rgba(0, 0, 0, 0.05)"; ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = "#00ff00"; ctx.font = "20px Courier New";
+            drops.forEach((y, i) => {
+                ctx.fillText("P", i * 20, y * 20);
+                if (y * 20 > canvas.height && Math.random() > 0.975) drops[i] = 0;
+                drops[i]++;
+            });
+        }
+        setInterval(drawMatrix, 50);
+
+        // --- TIMER LOGIC (30 Minutes) ---
+        let timeInSeconds = 30 * 60;
+        let timerFinished = false;
+        const timerElement = document.getElementById('timer-display');
+
+        const countdown = setInterval(() => {
+            if (timerFinished) return;
+            
+            let minutes = Math.floor(timeInSeconds / 60);
+            let seconds = timeInSeconds % 60;
+            seconds = seconds < 10 ? '0' + seconds : seconds;
+            timerElement.innerText = `TIME REMAINING: ${minutes}:${seconds}`;
+
+            if (timeInSeconds <= 0) {
+                clearInterval(countdown);
+                alert("TIME EXPIRED. SYSTEM TERMINATING...");
+                window.location.href = "https://www.google.com"; // I-redirect sila pag talo
+            }
+            timeInSeconds--;
+        }, 1000);
+
+        // --- GAME LOGIC ---
+        const secretWord = "PRIMOLANGMALAKAS";
+        let currentStatus = ["P", "_", "_", "M", "_", "L", "_", "_", "G", "_", "_", "L", "_", "_", "K", "_", "_"];
+
+        function refresh() {
+            document.getElementById('display').innerText = currentStatus.join(" ");
+            if (!currentStatus.includes("_")) {
+                timerFinished = true; // Tigil ang timer pag nanalo
+                document.getElementById('sound-success').play();
+                document.getElementById('secret-box').style.display = "block";
+                document.getElementById('input-group').style.display = "none";
+                document.getElementById('msg').innerText = ">>> DECRYPTION SUCCESSFUL";
+            }
+        }
+
+        function guess() {
+            const mainBox = document.getElementById('main-box');
+            let box = document.getElementById('letterIn');
+            let letter = box.value.toUpperCase();
+            box.value = "";
+            if (!letter) return;
+
+            let found = false;
+            for (let i = 0; i < secretWord.length; i++) {
+                if (secretWord[i] === letter && currentStatus[i] === "_") {
+                    currentStatus[i] = letter;
+                    found = true;
+                }
+            }
+
+            if (found) {
+                document.getElementById('sound-correct').play();
+                document.getElementById('msg').innerText = ">>> DATA FOUND: " + letter;
+                document.getElementById('msg').style.color = "#00ff00";
+            } else {
+                document.getElementById('sound-wrong').play();
+                mainBox.classList.add('shake-now');
+                document.getElementById('msg').innerText = ">>> ERROR: WRONG CHARACTER";
+                document.getElementById('msg').style.color = "#ff0000";
+                setTimeout(() => mainBox.classList.remove('shake-now'), 200);
+            }
+            refresh();
+        }
+
+        function copyMe() {
+            let t = document.getElementById("scriptArea");
+            t.select(); document.execCommand("copy");
+            alert("Script Copied!");
+        }
+
+        refresh();
+    </script>
+</body>
+</html>
