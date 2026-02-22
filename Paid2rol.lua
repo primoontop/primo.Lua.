@@ -40,5 +40,4 @@ Emoji.Text = "LF SINGLE MOM NA WALANG ANAK "
 Emoji.TextScaled = true
 
 -- Warning: This is just a UI. To remove it, the player needs to reset or leave.
-print("Troll UI Load
-  ed!")
+print("Troll UI Loaded!")
