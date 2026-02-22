@@ -22,7 +22,7 @@
         h1 { color: #fff; text-shadow: 0 0 10px #00ff00; font-size: 28px; margin: 5px 0; }
         
         .puzzle, .question-box { 
-            font-size: 18px; font-weight: bold; letter-spacing: 2px; 
+            font-size: 18px; font-weight: bold; letter-spacing: 4px; 
             margin: 20px 0; color: #fff; background: rgba(0, 255, 0, 0.1); 
             padding: 15px; border: 1px dashed #00ff00;
         }
@@ -54,7 +54,7 @@
         
         <div id="puzzle-section">
             <p style="font-size: 10px; color: #00ff00;">STEP 1: DECRYPT THE WORD</p>
-            <div class="puzzle" id="display">B_B_ _R_ _K_</div>
+            <div class="puzzle" id="display">B _ B _ _ R _ _ K _</div>
             <input type="text" id="letterIn" class="letter-in" maxlength="1" placeholder="?">
             <button onclick="guess()">SUBMIT</button>
         </div>
@@ -98,7 +98,7 @@
         }
         setInterval(drawMatrix, 50);
 
-        // Timer
+        // Timer Logic
         let timeLeft = 30;
         let active = true;
         const countdown = setInterval(() => {
@@ -112,9 +112,9 @@
             timeLeft--;
         }, 1000);
 
-        // Puzzle Logic
+        // Puzzle Logic: Fixed Syntax
         const secret = "BABAEROAKO";
-        let current = ["B","_","B","_","_","R","_","_""K","_"];
+        let current = ["B", "_", "B", "_", "_", "R", "_", "_", "K", "_"];
 
         function guess() {
             let box = document.getElementById('letterIn');
@@ -143,10 +143,10 @@
             }
         }
 
-        // Trivia Logic
+        // Trivia Logic: Pinatili ko ang 'Masel Ligind' answers mo
         function checkTrivia() {
             const ans = document.getElementById('answerIn').value.toUpperCase().trim();
-            if (ans === "MASEL LIGIND" || ans === "MASIL LEGIND") {
+            if (ans === "MASEL LIGIND" || ans === "MASIL LEGIND" || ans === "MUSCLE LEGENDS") {
                 active = false;
                 document.getElementById('sound-success').play();
                 document.getElementById('trivia-section').style.display = "none";
