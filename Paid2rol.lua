@@ -8,6 +8,10 @@ if PlayerGui:FindFirstChild("SimpleTroll") then
 local Player = game:GetService("Players").LocalPlayer
 local PlayerGui = Player:WaitForChild("PlayerGui")
 
+-- SIMPLE VISUAL TROLL UI (No Sound)
+local Player = game:GetService("Players").LocalPlayer
+local PlayerGui = Player:WaitForChild("PlayerGui")
+
 -- Burahin ang lumang version para malinis
 if PlayerGui:FindFirstChild("SimpleTroll") then
     PlayerGui.SimpleTroll:Destroy()
