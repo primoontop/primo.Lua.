@@ -1,43 +1,74 @@
--- Roblox Troll UI Script
+-- SIMPLE VISUAL TROLL UI (No Sound)
+local Player = game:GetService("Players").LocalPlayer
+local PlayerGui = Player:WaitForChild("PlayerGui")
+
+-- Burahin ang lumang version para malinis
+if PlayerGui:FindFirstChild("SimpleTroll") then
+    PlayerGui.SimpleTroll:Destroy()
+end
+
 local ScreenGui = Instance.new("ScreenGui")
-local Frame = Instance.new("Frame")
-local TextLabel = Instance.new("TextLabel")
+ScreenGui.Name = "SimpleTroll"
+ScreenGui.Parent = PlayerGui
+ScreenGui.IgnoreGuiInset = true -- Takop buong screen
+ScreenGui.DisplayOrder = 999999
+
+local MainFrame = Instance.new("Frame")
+MainFrame.Size = UDim2.new(1, 0, 1, 0)
+MainFrame.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+MainFrame.Active = true
+MainFrame.Parent = ScreenGui
+
+-- UMASA KA BA BOI? Text
+local RainbowText = Instance.new("TextLabel")
+RainbowText.Size = UDim2.new(1, 0, 0.3, 0)
+RainbowText.Position = UDim2.new(0, 0, 0.2, 0)
+RainbowText.BackgroundTransparency = 1
+RainbowText.Font = Enum.Font.Arcade
+RainbowText.Text = "UMASA KA BA BOI?"
+RainbowText.TextScaled = true
+RainbowText.Parent = MainFrame
+
+-- Subtext
 local SubText = Instance.new("TextLabel")
-local Emoji = Instance.new("TextLabel")
-
--- Properties
-ScreenGui.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
-ScreenGui.ResetOnSpawn = false
-
-Frame.Parent = ScreenGui
-Frame.BackgroundColor3 = Color3.fromRGB(0, 0, 0) -- Black Background
-Frame.Size = UDim2.new(1, 0, 1, 0) -- Full Screen
-Frame.Active = true
-
-TextLabel.Parent = Frame
-TextLabel.BackgroundTransparency = 1
-TextLabel.Position = UDim2.new(0, 0, 0.3, 0)
-TextLabel.Size = UDim2.new(1, 0, 0.2, 0)
-TextLabel.Font = Enum.Font.Arcade -- Pixel style font
-TextLabel.Text = "UMASA KA BA BOI?"
-TextLabel.TextColor3 = Color3.fromRGB(255, 0, 0) -- Red
-TextLabel.TextScaled = true
-
-SubText.Parent = Frame
-SubText.BackgroundTransparency = 1
-SubText.Position = UDim2.new(0, 0, 0.5, 0)
 SubText.Size = UDim2.new(1, 0, 0.1, 0)
+SubText.Position = UDim2.new(0, 0, 0.5, 0)
+SubText.Text = "HAHAHA MUKA KANG SCRIPT, IT'S A PRANK!"
+SubText.TextColor3 = Color3.fromRGB(255, 255, 255)
+SubText.BackgroundTransparency = 1
 SubText.Font = Enum.Font.SourceSansBold
-SubText.Text = "HAHAHA MUKA KANG SCRIPT , IT'S A PRANK!"
-SubText.TextColor3 = Color3.fromRGB(255, 255, 255) -- White
 SubText.TextScaled = true
+SubText.Parent = MainFrame
 
-Emoji.Parent = Frame
-Emoji.BackgroundTransparency = 1
-Emoji.Position = UDim2.new(0.4, 0, 0.6, 0)
-Emoji.Size = UDim2.new(0.2, 0, 0.2, 0)
-Emoji.Text = "LF SINGLE MOM NA WALANG ANAK "
-Emoji.TextScaled = true
+-- Emoji/LF Text
+local FunnyText = Instance.new("TextLabel")
+FunnyText.Size = UDim2.new(1, 0, 0.1, 0)
+FunnyText.Position = UDim2.new(0, 0, 0.65, 0)
+FunnyText.Text = "LF SINGLE MOM NA WALANG ANAK"
+FunnyText.TextColor3 = Color3.fromRGB(255, 255, 0)
+FunnyText.BackgroundTransparency = 1
+FunnyText.Font = Enum.Font.SourceSansBold
+FunnyText.TextScaled = true
+FunnyText.Parent = MainFrame
 
--- Warning: This is just a UI. To remove it, the player needs to reset or leave.
-print("Troll UI Loaded!")
+-- ANIMATION LOOP: Rainbow + Shake + Flashing
+task.spawn(function()
+    local hue = 0
+    while true do
+        -- Rainbow effect sa main text
+        RainbowText.TextColor3 = Color3.fromHSV(hue, 1, 1)
+        hue = hue + 0.02
+        if hue >= 1 then hue = 0 end
+        
+        -- Shake effect para sa main text
+        RainbowText.Position = UDim2.new(0, math.random(-5, 5), 0.2, math.random(-5, 5))
+        
+        -- Strobe Effect sa Background (Optional: kung gusto mo ng flash)
+        MainFrame.BackgroundColor3 = Color3.fromRGB(math.random(0, 15), 0, 0)
+        
+        task.wait(0.03)
+    end
+end)
+
+print("Visual Troll Lo
+  aded!")
